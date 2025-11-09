@@ -1,0 +1,58 @@
+<split>Welcome to TTS3 Colorization Test
+
+<comment=This is a test comment>This section tests all control tags.
+
+<voice=1>First speaker introduces the topic.
+<voice=2>Second speaker responds with enthusiasm!
+<voice=3>Third speaker adds additional context.
+
+<split>Now switching services to test service tags.
+
+<service=2>Using Google Cloud TTS now.
+<service=3>Switching to AWS Polly for this segment.
+<service=4>Now using ElevenLabs with a custom voice.
+
+<vid=rachel>This uses a custom voice ID from ElevenLabs.
+<label=10>This file will be numbered as output_010.
+
+<split>SSML Tag Testing Section
+
+<emphasis level="strong">This text should be strongly emphasized.</emphasis>
+
+<emphasis level="moderate">This text has moderate emphasis.</emphasis>
+
+Normal text here.<break time="1s"/>After a one second pause.
+
+<prosody rate="slow">This speech should be slower than normal.</prosody>
+
+<prosody rate="fast">This speech should be faster than normal.</prosody>
+
+<prosody pitch="+5st">Speaking with a higher pitch now.</prosody>
+
+<prosody pitch="-5st">Speaking with a lower pitch now.</prosody>
+
+<prosody volume="loud">This should be louder!</prosody>
+
+<prosody volume="soft">This should be softer and quieter.</prosody>
+
+<say-as interpret-as="cardinal">12345</say-as> should be spoken as a number.
+
+<say-as interpret-as="ordinal">1</say-as> should be spoken as "first".
+
+<say-as interpret-as="date" format="mdy">10/31/2024</say-as> should be spoken as a date.
+
+The <sub alias="World Wide Web">WWW</sub> should be expanded.
+
+<comment="Testing comments with quotes">More regular text continues here.
+
+<split>Mixed Tags Section
+
+<voice=1><emphasis level="strong">Important announcement</emphasis><break time="500ms"/>
+
+<prosody rate="slow"><prosody volume="loud">Slow and loud speech combined</prosody></prosody>
+
+<service=3><voice=2>Using AWS Polly with voice 2<break time="1s"/>
+
+<comment=TODO: Review this section later>Final text section here.
+
+<split>End of test document
