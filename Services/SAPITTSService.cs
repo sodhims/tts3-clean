@@ -6,7 +6,6 @@ using System.Speech.Synthesis;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TTS3.Models;
-using SpeechVoiceInfo = System.Speech.Synthesis.VoiceInfo;
 
 namespace TTS3.Services
 {
@@ -27,14 +26,15 @@ namespace TTS3.Services
             _synthesizer.SetOutputToDefaultAudioDevice();
         }
 
-        public List<Models.VoiceInfo> GetAvailableVoices()
+        // Fixed: Return type must match interface exactly
+        public List<TTS3.Models.VoiceInfo> GetAvailableVoices()
         {
-            var voices = new List<Models.VoiceInfo>();
+            var voices = new List<TTS3.Models.VoiceInfo>();
             var installedVoices = _synthesizer.GetInstalledVoices();
 
             foreach (var voice in installedVoices)
             {
-                voices.Add(new Models.VoiceInfo
+                voices.Add(new TTS3.Models.VoiceInfo
                 {
                     VoiceId = voice.VoiceInfo.Name,
                     DisplayName = voice.VoiceInfo.Name,

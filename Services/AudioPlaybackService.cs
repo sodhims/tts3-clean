@@ -21,7 +21,7 @@ namespace TTS3.Services
         public bool IsPlaying => _waveOut?.PlaybackState == PlaybackState.Playing;
         public bool IsPaused => _waveOut?.PlaybackState == PlaybackState.Paused;
         public int CurrentIndex => _currentIndex;
-        public string CurrentFile => _currentIndex >= 0 && _currentIndex < _playlist.Count 
+        public string CurrentFile => _currentIndex >= 0 && _currentIndex < _playlist.Count
             ? _playlist[_currentIndex] : null;
 
         public TimeSpan CurrentPosition => _currentAudioFile?.CurrentTime ?? TimeSpan.Zero;
@@ -35,6 +35,7 @@ namespace TTS3.Services
             Stop();
             _playlist = new List<string>(files);
             _currentIndex = -1;
+            System.Diagnostics.Debug.WriteLine($"[AudioPlayback] Loaded playlist with {files.Count} files");
         }
 
         /// <summary>
@@ -42,30 +43,56 @@ namespace TTS3.Services
         /// </summary>
         public void Play(int index)
         {
-            if (index < 0 || index >= _playlist.Count)
+            System.Diagnostics.Debug.WriteLine($"[AudioPlayback] Play called with index: {index}");
+
+            if (_playlist == null || _playlist.Count == 0)
+            {
+                System.Diagnostics.Debug.WriteLine($"[AudioPlayback] ERROR: Playlist is empty or null");
                 return;
+            }
+
+            if (index < 0 || index >= _playlist.Count)
+            {
+                System.Diagnostics.Debug.WriteLine($"[AudioPlayback] ERROR: Invalid index {index}, playlist count: {_playlist.Count}");
+                return;
+            }
 
             try
             {
                 Stop();
 
                 string filePath = _playlist[index];
+                System.Diagnostics.Debug.WriteLine($"[AudioPlayback] Loading file: {filePath}");
+
                 if (!File.Exists(filePath))
                 {
+                    System.Diagnostics.Debug.WriteLine($"[AudioPlayback] ERROR: File does not exist: {filePath}");
                     throw new FileNotFoundException($"Audio file not found: {filePath}");
                 }
 
+                var fileInfo = new FileInfo(filePath);
+                System.Diagnostics.Debug.WriteLine($"[AudioPlayback] File size: {fileInfo.Length} bytes");
+
                 _currentIndex = index;
                 _currentAudioFile = new AudioFileReader(filePath);
+
+                System.Diagnostics.Debug.WriteLine($"[AudioPlayback] AudioFileReader created. Duration: {_currentAudioFile.TotalTime}");
+
                 _waveOut = new WaveOutEvent();
                 _waveOut.Init(_currentAudioFile);
                 _waveOut.PlaybackStopped += WaveOut_PlaybackStopped;
+
+                System.Diagnostics.Debug.WriteLine($"[AudioPlayback] Starting playback...");
                 _waveOut.Play();
+
+                System.Diagnostics.Debug.WriteLine($"[AudioPlayback] Playback started successfully. State: {_waveOut.PlaybackState}");
 
                 PlaybackStateChanged?.Invoke(this, new PlaybackStateChangedEventArgs(true, false));
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"[AudioPlayback] EXCEPTION: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"[AudioPlayback] Stack: {ex.StackTrace}");
                 Console.WriteLine($"Playback error: {ex.Message}");
                 Stop();
             }

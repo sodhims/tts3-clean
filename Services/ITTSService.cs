@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TTS3.Models;
 
@@ -27,7 +28,7 @@ namespace TTS3.Services
         /// <summary>
         /// Get list of available voices
         /// </summary>
-        List<VoiceInfo> GetAvailableVoices();
+        List<TTS3.Models.VoiceInfo> GetAvailableVoices();
 
         /// <summary>
         /// Convert text segment to audio file

@@ -41,7 +41,7 @@ namespace TTS3
         private string _currentFilePath = "";
         internal List<string> _createdAudioFiles = new List<string>();
         internal string _lastOutputFolder = "";
-        private System.Windows.Threading.DispatcherTimer _playbackTimer;
+//        private System.Windows.Threading.DispatcherTimer _playbackTimer;
 
         private PluginManager _pluginManager;
 
@@ -60,6 +60,7 @@ namespace TTS3
         {
             InitializeComponent();
             InitializePluginSystem();
+            InitializeDragDrop();
 
 
 
@@ -92,57 +93,57 @@ namespace TTS3
             _currentService = _sapiService;
 
             // Initialize playback timer
-            _playbackTimer = new System.Windows.Threading.DispatcherTimer();
-            _playbackTimer.Interval = TimeSpan.FromMilliseconds(100);
-            _playbackTimer.Tick += PlaybackTimer_Tick;
+            //_playbackTimer = new System.Windows.Threading.DispatcherTimer();
+            //_playbackTimer.Interval = TimeSpan.FromMilliseconds(100);
+            ////_playbackTimer.Tick += PlaybackTimer_Tick;
 
             // Setup playback service events
-            _playbackService.PlaybackStateChanged += PlaybackService_PlaybackStateChanged;
-            _playbackService.PlaybackCompleted += PlaybackService_PlaybackCompleted;
+            //_playbackService.PlaybackStateChanged += PlaybackService_PlaybackStateChanged;
+            //_playbackService.PlaybackCompleted += PlaybackService_PlaybackCompleted;
 
             // Keyboard shortcuts
             this.PreviewKeyDown += MainWindow_PreviewKeyDown;
 
             // Initialize comment textbox placeholder
-            InitializeCommentTextBox();
+//            InitializeCommentTextBox();
 
             LoadVoices();
         }
 
         #region Initialization
 
-        private void InitializeCommentTextBox()
-        {
-            txtCommentText.Text = "Enter comment...";
-            txtCommentText.Foreground = Brushes.Gray;
+        //private void InitializeCommentTextBox()
+        //{
+        //    txtCommentText.Text = "Enter comment...";
+        //    txtCommentText.Foreground = Brushes.Gray;
 
-            txtCommentText.GotFocus += (s, e) =>
-            {
-                if (txtCommentText.Text == "Enter comment...")
-                {
-                    txtCommentText.Text = "";
-                    txtCommentText.Foreground = Brushes.Black;
-                }
-            };
+        //    txtCommentText.GotFocus += (s, e) =>
+        //    {
+        //        if (txtCommentText.Text == "Enter comment...")
+        //        {
+        //            txtCommentText.Text = "";
+        //            txtCommentText.Foreground = Brushes.Black;
+        //        }
+        //    };
 
-            txtCommentText.LostFocus += (s, e) =>
-            {
-                if (string.IsNullOrWhiteSpace(txtCommentText.Text))
-                {
-                    txtCommentText.Text = "Enter comment...";
-                    txtCommentText.Foreground = Brushes.Gray;
-                }
-            };
+        //    txtCommentText.LostFocus += (s, e) =>
+        //    {
+        //        if (string.IsNullOrWhiteSpace(txtCommentText.Text))
+        //        {
+        //            txtCommentText.Text = "Enter comment...";
+        //            txtCommentText.Foreground = Brushes.Gray;
+        //        }
+        //    };
 
-            txtCommentText.PreviewKeyDown += (s, e) =>
-            {
-                if (e.Key == Key.Enter)
-                {
-                    InsertComment_Click(s, e);
-                    e.Handled = true;
-                }
-            };
-        }
+        //    txtCommentText.PreviewKeyDown += (s, e) =>
+        //    {
+        //        if (e.Key == Key.Enter)
+        //        {
+        //            InsertComment_Click(s, e);
+        //            e.Handled = true;
+        //        }
+        //    };
+        //}
 
         private void LoadVoices()
         {
@@ -246,177 +247,491 @@ namespace TTS3
             caretPos.InsertTextInRun("<split>");
         }
 
-        private void InsertVoice_Click(object sender, RoutedEventArgs e)
-        {
-            if (cmbVoiceTag.SelectedItem != null)
-            {
-                var voiceTag = (cmbVoiceTag.SelectedItem as ComboBoxItem).Content.ToString();
-                var caretPos = rtbTextContent.CaretPosition;
-                caretPos.InsertTextInRun($"<{voiceTag}>");
-            }
-        }
+        //private void InsertVoice_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (cmbVoiceTag.SelectedItem != null)
+        //    {
+        //        var voiceTag = (cmbVoiceTag.SelectedItem as ComboBoxItem).Content.ToString();
+        //        var caretPos = rtbTextContent.CaretPosition;
+        //        caretPos.InsertTextInRun($"<{voiceTag}>");
+        //    }
+        //}
 
-        private void InsertService_Click(object sender, RoutedEventArgs e)
-        {
-            if (cmbServiceTag.SelectedItem != null)
-            {
-                var selectedItem = (cmbServiceTag.SelectedItem as ComboBoxItem).Content.ToString();
-                // Extract the service number from "service=1 (SAPI)" format
-                var match = Regex.Match(selectedItem, @"service=(\d+)");
-                if (match.Success)
-                {
-                    string serviceTag = $"<service={match.Groups[1].Value}>";
-                    var caretPos = rtbTextContent.CaretPosition;
-                    caretPos.InsertTextInRun(serviceTag);
-                    LogMessage($"Inserted service tag: {serviceTag}");
-                }
-            }
-            else
-            {
-                MessageBox.Show("Please select a service from the dropdown first.", "Insert Service",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                cmbServiceTag.Focus();
-            }
-        }
+        //private void InsertService_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (cmbServiceTag.SelectedItem != null)
+        //    {
+        //        var selectedItem = (cmbServiceTag.SelectedItem as ComboBoxItem).Content.ToString();
+        //        // Extract the service number from "service=1 (SAPI)" format
+        //        var match = Regex.Match(selectedItem, @"service=(\d+)");
+        //        if (match.Success)
+        //        {
+        //            string serviceTag = $"<service={match.Groups[1].Value}>";
+        //            var caretPos = rtbTextContent.CaretPosition;
+        //            caretPos.InsertTextInRun(serviceTag);
+        //            LogMessage($"Inserted service tag: {serviceTag}");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("Please select a service from the dropdown first.", "Insert Service",
+        //            MessageBoxButton.OK, MessageBoxImage.Information);
+        //        cmbServiceTag.Focus();
+        //    }
+        //}
 
-        private void InsertComment_Click(object sender, RoutedEventArgs e)
-        {
-            string commentText = txtCommentText.Text;
+        //private void InsertComment_Click(object sender, RoutedEventArgs e)
+        //{
+        //    string commentText = txtCommentText.Text;
 
-            if (string.IsNullOrWhiteSpace(commentText) || commentText == "Enter comment...")
-            {
-                MessageBox.Show("Please enter comment text first.", "Insert Comment",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                txtCommentText.Focus();
-                return;
-            }
+        //    if (string.IsNullOrWhiteSpace(commentText) || commentText == "Enter comment...")
+        //    {
+        //        MessageBox.Show("Please enter comment text first.", "Insert Comment",
+        //            MessageBoxButton.OK, MessageBoxImage.Information);
+        //        txtCommentText.Focus();
+        //        return;
+        //    }
 
-            var caretPos = rtbTextContent.CaretPosition;
+        //    var caretPos = rtbTextContent.CaretPosition;
 
-            if (commentText.Contains("\""))
-            {
-                string escapedText = commentText.Replace("\"", "\\\"");
-                caretPos.InsertTextInRun($"<comment=\"{escapedText}\">");
-            }
-            else
-            {
-                caretPos.InsertTextInRun($"<comment={commentText}>");
-            }
+        //    if (commentText.Contains("\""))
+        //    {
+        //        string escapedText = commentText.Replace("\"", "\\\"");
+        //        caretPos.InsertTextInRun($"<comment=\"{escapedText}\">");
+        //    }
+        //    else
+        //    {
+        //        caretPos.InsertTextInRun($"<comment={commentText}>");
+        //    }
 
-            txtCommentText.Text = "Enter comment...";
-            txtCommentText.Foreground = Brushes.Gray;
+        //    txtCommentText.Text = "Enter comment...";
+        //    txtCommentText.Foreground = Brushes.Gray;
 
-            LogMessage($"Inserted comment: {commentText}");
-        }
+        //    LogMessage($"Inserted comment: {commentText}");
+        //}
 
         // REPLACE the existing InsertSSML_Click method with this improved version
         // REPLACE both InsertSSML_Click and WrapSSML_Click methods with these updated versions
 
-        private void InsertSSML_Click(object sender, RoutedEventArgs e)
-        {
-            if (cmbSSMLTags.SelectedItem == null)
-            {
-                MessageBox.Show("Please select an SSML tag from the dropdown first.", "Insert SSML",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                cmbSSMLTags.Focus();
-                return;
-            }
+        //private void InsertSSML_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (cmbSSMLTags.SelectedItem == null)
+        //    {
+        //        MessageBox.Show("Please select an SSML tag from the dropdown first.", "Insert SSML",
+        //            MessageBoxButton.OK, MessageBoxImage.Information);
+        //        cmbSSMLTags.Focus();
+        //        return;
+        //    }
 
-            var selectedItem = cmbSSMLTags.SelectedItem as ComboBoxItem;
-            // Get the actual tag from the Tag property
-            string ssmlTag = selectedItem.Tag?.ToString() ?? selectedItem.Content.ToString();
+        //    var selectedItem = cmbSSMLTags.SelectedItem as ComboBoxItem;
+        //    // Get the actual tag from the Tag property
+        //    string ssmlTag = selectedItem.Tag?.ToString() ?? selectedItem.Content.ToString();
 
-            var caretPos = rtbTextContent.CaretPosition;
+        //    var caretPos = rtbTextContent.CaretPosition;
 
-            // Check if it's a self-closing tag
-            if (ssmlTag.Contains("/>"))
-            {
-                // Self-closing tag - just insert it
-                caretPos.InsertTextInRun(ssmlTag);
-                LogMessage($"Inserted SSML tag: {ssmlTag}");
-            }
-            else
-            {
-                // Opening/closing tag pair - insert both and position cursor between them
-                var tagMatch = Regex.Match(ssmlTag, @"<(\w+(?:-\w+)?)[^>]*>");
-                if (tagMatch.Success)
-                {
-                    var tagName = tagMatch.Groups[1].Value;
-                    var openTag = tagMatch.Groups[0].Value;
-                    var closeTag = $"</{tagName}>";
+        //    // Check if it's a self-closing tag
+        //    if (ssmlTag.Contains("/>"))
+        //    {
+        //        // Self-closing tag - just insert it
+        //        caretPos.InsertTextInRun(ssmlTag);
+        //        LogMessage($"Inserted SSML tag: {ssmlTag}");
+        //    }
+        //    else
+        //    {
+        //        // Opening/closing tag pair - insert both and position cursor between them
+        //        var tagMatch = Regex.Match(ssmlTag, @"<(\w+(?:-\w+)?)[^>]*>");
+        //        if (tagMatch.Success)
+        //        {
+        //            var tagName = tagMatch.Groups[1].Value;
+        //            var openTag = tagMatch.Groups[0].Value;
+        //            var closeTag = $"</{tagName}>";
 
-                    // Insert opening tag
-                    caretPos.InsertTextInRun(openTag);
+        //            // Insert opening tag
+        //            caretPos.InsertTextInRun(openTag);
 
-                    // Get position after opening tag
-                    var middlePos = caretPos;
+        //            // Get position after opening tag
+        //            var middlePos = caretPos;
 
-                    // Insert closing tag
-                    caretPos.InsertTextInRun(closeTag);
+        //            // Insert closing tag
+        //            caretPos.InsertTextInRun(closeTag);
 
-                    // Position cursor between tags
-                    rtbTextContent.CaretPosition = middlePos;
+        //            // Position cursor between tags
+        //            rtbTextContent.CaretPosition = middlePos;
 
-                    LogMessage($"Inserted SSML tags: {openTag}...{closeTag}");
-                }
-                else
-                {
-                    caretPos.InsertTextInRun(ssmlTag);
-                }
-            }
+        //            LogMessage($"Inserted SSML tags: {openTag}...{closeTag}");
+        //        }
+        //        else
+        //        {
+        //            caretPos.InsertTextInRun(ssmlTag);
+        //        }
+        //    }
 
-            rtbTextContent.Focus();
-        }
+        //    rtbTextContent.Focus();
+        //}
 
-        private void WrapSSML_Click(object sender, RoutedEventArgs e)
-        {
-            if (cmbSSMLTags.SelectedItem == null)
-            {
-                MessageBox.Show("Please select an SSML tag from the dropdown first.", "Wrap with SSML",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                cmbSSMLTags.Focus();
-                return;
-            }
+        //private void WrapSSML_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (cmbSSMLTags.SelectedItem == null)
+        //    {
+        //        MessageBox.Show("Please select an SSML tag from the dropdown first.", "Wrap with SSML",
+        //            MessageBoxButton.OK, MessageBoxImage.Information);
+        //        cmbSSMLTags.Focus();
+        //        return;
+        //    }
 
-            var selection = rtbTextContent.Selection;
-            if (selection.IsEmpty)
-            {
-                MessageBox.Show("Please select text to wrap with SSML tags.", "Wrap with SSML",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
+        //    var selection = rtbTextContent.Selection;
+        //    if (selection.IsEmpty)
+        //    {
+        //        MessageBox.Show("Please select text to wrap with SSML tags.", "Wrap with SSML",
+        //            MessageBoxButton.OK, MessageBoxImage.Information);
+        //        return;
+        //    }
 
-            string selectedText = selection.Text;
-            var selectedItem = cmbSSMLTags.SelectedItem as ComboBoxItem;
-            // Get the actual tag from the Tag property
-            string ssmlTag = selectedItem.Tag?.ToString() ?? selectedItem.Content.ToString();
+        //    string selectedText = selection.Text;
+        //    var selectedItem = cmbSSMLTags.SelectedItem as ComboBoxItem;
+        //    // Get the actual tag from the Tag property
+        //    string ssmlTag = selectedItem.Tag?.ToString() ?? selectedItem.Content.ToString();
 
-            if (ssmlTag.Contains("/>"))
-            {
-                MessageBox.Show("Cannot wrap text with a self-closing tag. Please select a tag with opening and closing elements.",
-                    "Wrap with SSML", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+        //    if (ssmlTag.Contains("/>"))
+        //    {
+        //        MessageBox.Show("Cannot wrap text with a self-closing tag. Please select a tag with opening and closing elements.",
+        //            "Wrap with SSML", MessageBoxButton.OK, MessageBoxImage.Warning);
+        //        return;
+        //    }
 
-            var tagMatch = Regex.Match(ssmlTag, @"<(\w+(?:-\w+)?)[^>]*>");
-            if (tagMatch.Success)
-            {
-                var tagName = tagMatch.Groups[1].Value;
-                var openTag = tagMatch.Groups[0].Value;
-                var closeTag = $"</{tagName}>";
+        //    var tagMatch = Regex.Match(ssmlTag, @"<(\w+(?:-\w+)?)[^>]*>");
+        //    if (tagMatch.Success)
+        //    {
+        //        var tagName = tagMatch.Groups[1].Value;
+        //        var openTag = tagMatch.Groups[0].Value;
+        //        var closeTag = $"</{tagName}>";
 
-                string wrappedText = openTag + selectedText + closeTag;
-                selection.Text = wrappedText;
+        //        string wrappedText = openTag + selectedText + closeTag;
+        //        selection.Text = wrappedText;
 
-                LogMessage($"Wrapped selection with {tagName} tags");
-            }
-            else
-            {
-                MessageBox.Show("Could not parse SSML tag format.", "Wrap with SSML",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+        //        LogMessage($"Wrapped selection with {tagName} tags");
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("Could not parse SSML tag format.", "Wrap with SSML",
+        //            MessageBoxButton.OK, MessageBoxImage.Error);
+        //    }
+        //}
         #endregion
+
+        #region Drag and Drop SSML Tags
+
+        private void InitializeDragDrop()
+        {
+            rtbTextContent.AllowDrop = true;
+            rtbTextContent.PreviewDragOver += RichTextBox_PreviewDragOver;
+            rtbTextContent.Drop += RichTextBox_Drop;
+        }
+
+        private void DraggableTag_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Border border && border.Tag != null)
+            {
+                string tagType = border.Tag.ToString();
+                DragDrop.DoDragDrop(border, tagType, DragDropEffects.Copy);
+            }
+        }
+
+        private void RichTextBox_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            e.Effects = DragDropEffects.Copy;
+            e.Handled = true;
+        }
+
+        //private void RichTextBox_Drop(object sender, DragEventArgs e)
+        //{
+        //    if (e.Data.GetDataPresent(typeof(string)))
+        //    {
+        //        string tagType = e.Data.GetData(typeof(string)) as string;
+
+        //        // Get drop position
+        //        Point position = e.GetPosition(rtbTextContent);
+        //        TextPointer dropPos = rtbTextContent.GetPositionFromPoint(position, true);
+
+        //        if (dropPos != null)
+        //        {
+        //            string tagToInsert = GenerateTagFromType(tagType);
+
+        //            // Check if text is selected
+        //            if (!rtbTextContent.Selection.IsEmpty)
+        //            {
+        //                // Wrap selected text
+        //                WrapSelectionWithTag(tagType);
+        //            }
+        //            else
+        //            {
+        //                // Insert at drop position
+        //                dropPos.InsertTextInRun(tagToInsert);
+        //                rtbTextContent.CaretPosition = dropPos;
+        //            }
+
+        //            LogMessage($"Inserted tag: {tagToInsert}");
+        //        }
+
+        //        e.Handled = true;
+        //    }
+        //}
+
+        //private string GenerateTagFromType(string tagType)
+        //{
+        //    switch (tagType)
+        //    {
+        //        case "split":
+        //            return "<split>";
+        //        case "voice":
+        //            return "<voice=1>";
+        //        case "service":
+        //            return "<service=1>";
+        //        case "label":
+        //            return "<label=1>";
+        //        case "comment":
+        //            return "<comment=note>";
+        //        case "emphasis":
+        //            return "<emphasis level=\"strong\"></emphasis>";
+        //        case "break":
+        //            return "<break time=\"1s\"/>";
+        //        case "prosody":
+        //            return "<prosody rate=\"medium\"></prosody>";
+        //        case "say-as":
+        //            return "<say-as interpret-as=\"cardinal\"></say-as>";
+        //        case "sub":
+        //            return "<sub alias=\"substitute\"></sub>";
+        //        default:
+        //            return $"<{tagType}>";
+        //    }
+        //}
+
+        private void WrapSelectionWithTag(string tagType)
+        {
+            string selectedText = rtbTextContent.Selection.Text;
+            string wrappedText = "";
+
+            switch (tagType)
+            {
+                case "emphasis":
+                    wrappedText = $"<emphasis level=\"strong\">{selectedText}</emphasis>";
+                    break;
+                case "prosody":
+                    wrappedText = $"<prosody rate=\"medium\">{selectedText}</prosody>";
+                    break;
+                case "say-as":
+                    wrappedText = $"<say-as interpret-as=\"cardinal\">{selectedText}</say-as>";
+                    break;
+                case "sub":
+                    wrappedText = $"<sub alias=\"substitute\">{selectedText}</sub>";
+                    break;
+                default:
+                    // Self-closing or control tags don't wrap
+                    rtbTextContent.Selection.Text = "";
+                    rtbTextContent.CaretPosition.InsertTextInRun(GenerateTagFromType(tagType));
+                    return;
+            }
+
+            rtbTextContent.Selection.Text = wrappedText;
+        }
+
+        #endregion
+
+        #region Playback from Cursor
+
+        //private async void PlayPause_Click(object sender, RoutedEventArgs e)
+        //{
+        //    // If already playing/paused, handle pause/resume
+        //    if (_playbackService.IsPlaying)
+        //    {
+        //        _playbackService.Pause();
+        //        btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
+        //        _playbackTimer.Stop();
+        //        LogMessage("Playback paused");
+        //        return;
+        //    }
+        //    else if (_playbackService.IsPaused)
+        //    {
+        //        _playbackService.Resume();
+        //        btnPlayPause.Content = new TextBlock { Text = "⏸ Pause" };
+        //        _playbackTimer.Start();
+        //        LogMessage("Playback resumed");
+        //        return;
+        //    }
+
+        //    // Start new playback from cursor position
+        //    await PlayFromCursor();
+        //}
+
+        //private async Task PlayFromCursor()
+        //{
+        //    try
+        //    {
+        //        LogMessage("=== PLAYBACK FROM CURSOR STARTED ===");
+
+        //        // Check if service is selected
+        //        if (cmbTTSEngine.SelectedIndex >= 0 && cmbTTSEngine.SelectedIndex < _ttsServices.Count)
+        //        {
+        //            _currentService = _ttsServices[cmbTTSEngine.SelectedIndex];
+        //        }
+
+        //        if (_currentService == null)
+        //        {
+        //            MessageBox.Show("Please select a TTS service first.", "No Service Selected",
+        //                MessageBoxButton.OK, MessageBoxImage.Warning);
+        //            return;
+        //        }
+
+        //        if (cmbVoices.SelectedIndex < 0)
+        //        {
+        //            MessageBox.Show("Please select a voice first.", "No Voice Selected",
+        //                MessageBoxButton.OK, MessageBoxImage.Warning);
+        //            return;
+        //        }
+
+        //        // Get text from cursor to end (or all text if no cursor)
+        //        string textToPlay;
+        //        TextPointer startPos;
+
+        //        if (rtbTextContent.CaretPosition != null &&
+        //            rtbTextContent.CaretPosition.CompareTo(rtbTextContent.Document.ContentStart) > 0)
+        //        {
+        //            // Play from cursor position to end
+        //            startPos = rtbTextContent.CaretPosition;
+        //            var endPos = rtbTextContent.Document.ContentEnd;
+        //            textToPlay = new TextRange(startPos, endPos).Text;
+
+        //            LogMessage($"✓ Playing from cursor position ({textToPlay.Length} chars remaining)");
+        //        }
+        //        else
+        //        {
+        //            // Play from beginning
+        //            var textRange = new TextRange(rtbTextContent.Document.ContentStart, rtbTextContent.Document.ContentEnd);
+        //            textToPlay = textRange.Text;
+
+        //            LogMessage($"✓ Playing from beginning ({textToPlay.Length} chars)");
+        //        }
+
+        //        if (string.IsNullOrWhiteSpace(textToPlay))
+        //        {
+        //            MessageBox.Show("No text to play from this position.", "No Text",
+        //                MessageBoxButton.OK, MessageBoxImage.Information);
+        //            return;
+        //        }
+
+        //        // Clean the text
+        //        string cleanedText = textToPlay;
+        //        cleanedText = Regex.Replace(cleanedText, @"<split>", "", RegexOptions.IgnoreCase);
+        //        cleanedText = Regex.Replace(cleanedText, @"<service=\d+>", "", RegexOptions.IgnoreCase);
+        //        cleanedText = Regex.Replace(cleanedText, @"<voice=\d+>", "", RegexOptions.IgnoreCase);
+        //        cleanedText = Regex.Replace(cleanedText, @"<vid=[^>]+>", "", RegexOptions.IgnoreCase);
+        //        cleanedText = Regex.Replace(cleanedText, @"<label=\d+>", "", RegexOptions.IgnoreCase);
+        //        cleanedText = _ssmlProcessingService.StripComments(cleanedText);
+        //        cleanedText = cleanedText.Trim();
+
+        //        if (string.IsNullOrWhiteSpace(cleanedText))
+        //        {
+        //            MessageBox.Show("No content to play after removing control tags.", "No Content",
+        //                MessageBoxButton.OK, MessageBoxImage.Information);
+        //            return;
+        //        }
+
+        //        LogMessage($"✓ Cleaned text: {cleanedText.Substring(0, Math.Min(100, cleanedText.Length))}...");
+
+        //        // Update UI
+        //        btnConvert.IsEnabled = false;
+        //        btnPlayPause.Content = new TextBlock { Text = "⏸ Generating..." };
+        //        btnStopPlayback.IsEnabled = true;
+
+        //        // Create temp file
+        //        string tempFile = Path.Combine(Path.GetTempPath(), $"tts_play_{Guid.NewGuid()}");
+        //        LogMessage($"✓ Temp file: {tempFile}");
+
+        //        var settings = new ConversionSettings
+        //        {
+        //            RateValue = sliderRate.Value,
+        //            VolumeValue = sliderVolume.Value,
+        //            OutputFormatIndex = 0
+        //        };
+
+        //        LogMessage($"Generating audio with {_currentService.Name}...");
+
+        //        bool success = await _currentService.TestVoiceAsync(
+        //            cleanedText, tempFile, cmbVoices.SelectedIndex, settings);
+
+        //        LogMessage($"TestVoiceAsync returned: {success}");
+
+        //        // Check for the file
+        //        string actualFile = tempFile;
+        //        if (!File.Exists(tempFile))
+        //        {
+        //            if (File.Exists(tempFile + ".wav"))
+        //            {
+        //                actualFile = tempFile + ".wav";
+        //                LogMessage($"✓ Found file: {actualFile}");
+        //            }
+        //            else
+        //            {
+        //                LogMessage($"✗ File not found at: {tempFile} or {tempFile}.wav");
+        //            }
+        //        }
+
+        //        if (success && File.Exists(actualFile))
+        //        {
+        //            var fileInfo = new FileInfo(actualFile);
+        //            LogMessage($"✓ Audio file: {fileInfo.Length} bytes");
+
+        //            _playbackService.Stop();
+        //            _playbackService.LoadPlaylist(new List<string> { actualFile });
+        //            _playbackService.Play(0);
+
+        //            btnPlayPause.Content = new TextBlock { Text = "⏸ Pause" };
+        //            _playbackTimer.Start();
+
+        //            txtCurrentFile.Text = "Playing from editor";
+
+        //            LogMessage($"✓ Playback started. IsPlaying={_playbackService.IsPlaying}");
+
+        //            // Re-enable convert button when done
+        //            EventHandler completionHandler = null;
+        //            completionHandler = (s, args) =>
+        //            {
+        //                Dispatcher.Invoke(() =>
+        //                {
+        //                    btnConvert.IsEnabled = true;
+        //                    btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
+        //                    btnStopPlayback.IsEnabled = false;
+        //                    txtCurrentFile.Text = "Playback complete";
+        //                    _playbackTimer.Stop();
+        //                    LogMessage("=== PLAYBACK COMPLETED ===");
+        //                });
+        //                _playbackService.PlaybackCompleted -= completionHandler;
+        //            };
+        //            _playbackService.PlaybackCompleted += completionHandler;
+        //        }
+        //        else
+        //        {
+        //            LogMessage($"✗ Failed to generate audio");
+        //            MessageBox.Show($"Failed to generate audio.\n\nService: {_currentService.Name}\nVoice: {cmbVoices.SelectedIndex}",
+        //                "Playback Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        //            btnConvert.IsEnabled = true;
+        //            btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
+        //            btnStopPlayback.IsEnabled = false;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LogMessage($"✗ Error: {ex.Message}");
+        //        MessageBox.Show($"Error playing text:\n\n{ex.Message}", "Error",
+        //            MessageBoxButton.OK, MessageBoxImage.Error);
+        //        btnConvert.IsEnabled = true;
+        //        btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
+        //        btnStopPlayback.IsEnabled = false;
+        //    }
+        //}
+
+        #endregion
+
 
         #region Plugin System
 
@@ -1265,13 +1580,40 @@ namespace TTS3
         {
             try
             {
+                LogMessage("=== PREVIEW STARTED ===");
+
+                // 1. Check service selection
+                if (cmbTTSEngine.SelectedIndex >= 0 && cmbTTSEngine.SelectedIndex < _ttsServices.Count)
+                {
+                    _currentService = _ttsServices[cmbTTSEngine.SelectedIndex];
+                    LogMessage($"✓ Service selected: {_currentService.Name}");
+                }
+                else
+                {
+                    LogMessage($"✗ Invalid service index: {cmbTTSEngine.SelectedIndex}");
+                    MessageBox.Show("Please select a TTS service first.", "No Service Selected",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // 2. Check voice selection
+                if (cmbVoices.SelectedIndex < 0)
+                {
+                    LogMessage($"✗ No voice selected");
+                    MessageBox.Show("Please select a voice first.", "No Voice Selected",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                LogMessage($"✓ Voice index: {cmbVoices.SelectedIndex}");
+
+                // 3. Get text to preview
                 string testText;
                 var selection = rtbTextContent.Selection;
 
                 if (!selection.IsEmpty)
                 {
                     testText = selection.Text;
-                    LogMessage($"Testing selected text: {testText.Substring(0, Math.Min(50, testText.Length))}...");
+                    LogMessage($"✓ Using selected text ({testText.Length} chars)");
                 }
                 else
                 {
@@ -1279,21 +1621,20 @@ namespace TTS3
                     var start = caretPos.GetPositionAtOffset(-50) ?? rtbTextContent.Document.ContentStart;
                     var end = caretPos.GetPositionAtOffset(50) ?? rtbTextContent.Document.ContentEnd;
                     testText = new TextRange(start, end).Text;
-                    LogMessage("Testing text around cursor position");
+                    LogMessage($"✓ Using text around cursor ({testText.Length} chars)");
                 }
 
                 if (string.IsNullOrWhiteSpace(testText))
                 {
-                    MessageBox.Show("No text selected or around cursor to test.");
+                    LogMessage("✗ No text to preview");
+                    MessageBox.Show("No text selected or around cursor to test.", "No Text",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
 
-                StopTestSelection_Click(sender, e);
+                // 4. Clean the text
+                LogMessage($"Original text: {testText.Substring(0, Math.Min(100, testText.Length))}...");
 
-                btnStopTestSelection.IsEnabled = true;
-                btnTestSelection.IsEnabled = false;
-
-                // Remove control tags
                 string cleanedText = testText;
                 cleanedText = Regex.Replace(cleanedText, @"<split>", "", RegexOptions.IgnoreCase);
                 cleanedText = Regex.Replace(cleanedText, @"<service=\d+>", "", RegexOptions.IgnoreCase);
@@ -1305,56 +1646,125 @@ namespace TTS3
 
                 if (string.IsNullOrWhiteSpace(cleanedText))
                 {
-                    MessageBox.Show("No content to test after removing control tags.");
-                    btnStopTestSelection.IsEnabled = false;
-                    btnTestSelection.IsEnabled = true;
+                    LogMessage("✗ No content after cleaning");
+                    MessageBox.Show("No content to test after removing control tags.", "No Content",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
 
-                string tempFile = Path.GetTempFileName();
+                LogMessage($"✓ Cleaned text ({cleanedText.Length} chars): {cleanedText.Substring(0, Math.Min(100, cleanedText.Length))}...");
 
+                // 5. Stop any current playback
+                _playbackService.Stop();
+                btnStopTestSelection.IsEnabled = true;
+                btnTestSelection.IsEnabled = false;
+
+                // 6. Create temp file
+                string tempFile = Path.Combine(Path.GetTempPath(), $"tts_preview_{Guid.NewGuid()}");
+                LogMessage($"✓ Temp file path: {tempFile}");
+
+                // 7. Create settings
                 var settings = new ConversionSettings
                 {
                     RateValue = sliderRate.Value,
                     VolumeValue = sliderVolume.Value,
                     OutputFormatIndex = 0
                 };
+                LogMessage($"✓ Settings: Rate={settings.RateValue}, Volume={settings.VolumeValue}");
+
+                // 8. Call TTS service
+                LogMessage($"Calling {_currentService.Name}.TestVoiceAsync()...");
 
                 bool success = await _currentService.TestVoiceAsync(
                     cleanedText, tempFile, cmbVoices.SelectedIndex, settings);
 
-                if (success && File.Exists(tempFile + ".wav"))
+                LogMessage($"TestVoiceAsync returned: {success}");
+
+                // 9. Check for output file
+                string actualFile = tempFile;
+                if (!File.Exists(tempFile))
                 {
-                    _playbackService.LoadPlaylist(new List<string> { tempFile + ".wav" });
+                    LogMessage($"File not found at: {tempFile}");
+                    if (File.Exists(tempFile + ".wav"))
+                    {
+                        actualFile = tempFile + ".wav";
+                        LogMessage($"✓ Found file with .wav extension: {actualFile}");
+                    }
+                    else
+                    {
+                        LogMessage($"✗ File not found at: {tempFile}.wav either");
+                    }
+                }
+                else
+                {
+                    LogMessage($"✓ File found at: {actualFile}");
+                }
+
+                if (File.Exists(actualFile))
+                {
+                    var fileInfo = new FileInfo(actualFile);
+                    LogMessage($"✓ File size: {fileInfo.Length} bytes");
+
+                    if (fileInfo.Length == 0)
+                    {
+                        LogMessage("✗ ERROR: File is empty!");
+                        MessageBox.Show("Audio file was created but is empty.", "Preview Error",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                        btnStopTestSelection.IsEnabled = false;
+                        btnTestSelection.IsEnabled = true;
+                        return;
+                    }
+
+                    // 10. Load and play
+                    LogMessage("Loading file into playback service...");
+                    _playbackService.LoadPlaylist(new List<string> { actualFile });
+
+                    LogMessage("Starting playback...");
                     _playbackService.Play(0);
-                    _playbackService.PlaybackCompleted += (s, args) =>
+
+                    LogMessage($"✓ Playback started. IsPlaying={_playbackService.IsPlaying}");
+
+                    // Setup completion handler
+                    EventHandler completionHandler = null;
+                    completionHandler = (s, args) =>
                     {
                         Dispatcher.Invoke(() =>
                         {
                             btnStopTestSelection.IsEnabled = false;
                             btnTestSelection.IsEnabled = true;
+                            LogMessage("=== PREVIEW COMPLETED ===");
                         });
+                        _playbackService.PlaybackCompleted -= completionHandler;
                     };
+                    _playbackService.PlaybackCompleted += completionHandler;
                 }
                 else
                 {
+                    LogMessage($"✗ FAILED: File does not exist");
+                    MessageBox.Show($"Failed to generate preview audio.\n\nService: {_currentService.Name}\nVoice: {cmbVoices.SelectedIndex}\nFile checked: {actualFile}",
+                        "Preview Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     btnStopTestSelection.IsEnabled = false;
                     btnTestSelection.IsEnabled = true;
                 }
             }
             catch (Exception ex)
             {
-                LogMessage($"Error testing selection: {ex.Message}");
+                LogMessage($"✗ EXCEPTION: {ex.Message}");
+                LogMessage($"Stack trace: {ex.StackTrace}");
+                MessageBox.Show($"Error testing selection:\n\n{ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 btnStopTestSelection.IsEnabled = false;
                 btnTestSelection.IsEnabled = true;
             }
         }
 
+        // Move this OUTSIDE of TestSelection_Click - it should be a separate method
         private void StopTestSelection_Click(object sender, RoutedEventArgs e)
         {
             _playbackService.Stop();
             btnStopTestSelection.IsEnabled = false;
             btnTestSelection.IsEnabled = true;
+            LogMessage("Preview playback stopped");
         }
 
 
@@ -1394,10 +1804,20 @@ namespace TTS3
                 txtStatus.Text = "Conversion complete!";
                 btnConvert.IsEnabled = true;
 
-                UpdatePlaybackControls();
+                // REMOVE THIS LINE:
+                // UpdatePlaybackControls();
 
-                MessageBox.Show($"Conversion completed successfully!\n\nCreated {_createdAudioFiles.Count} audio file(s).",
-                    "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                // ADD THIS INSTEAD:
+                var result = MessageBox.Show(
+                    $"Conversion completed successfully!\n\nCreated {_createdAudioFiles.Count} audio file(s).\n\nOpen Audio File Manager to play them?",
+                    "Success",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Information);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    AudioFileManager_Click(sender, e);
+                }
             }
             catch (Exception ex)
             {
@@ -1409,7 +1829,6 @@ namespace TTS3
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private async Task ProcessConversion(string text, ConversionSettings settings)
         {
             _createdAudioFiles.Clear();
@@ -1518,157 +1937,296 @@ namespace TTS3
         }
 
 
-        private void UpdatePlaybackControls()
-        {
-            if (_createdAudioFiles.Count > 0)
-            {
-                cmbCreatedFiles.Items.Clear();
-                foreach (var file in _createdAudioFiles)
-                {
-                    cmbCreatedFiles.Items.Add(Path.GetFileName(file));
-                }
+        //private void UpdatePlaybackControls()
+        //{
+        //    if (_createdAudioFiles.Count > 0)
+        //    {
+        //        cmbCreatedFiles.Items.Clear();
+        //        foreach (var file in _createdAudioFiles)
+        //        {
+        //            cmbCreatedFiles.Items.Add(Path.GetFileName(file));
+        //        }
 
-                cmbCreatedFiles.SelectedIndex = 0;
-                cmbCreatedFiles.IsEnabled = true;
-                btnPlayPause.IsEnabled = true;
-                btnStopPlayback.IsEnabled = true;
-                btnOpenFolder.IsEnabled = true;
+        //        cmbCreatedFiles.SelectedIndex = 0;
+        //        cmbCreatedFiles.IsEnabled = true;
+        //        btnPlayPause.IsEnabled = true;
+        //        btnStopPlayback.IsEnabled = true;
+        //        btnOpenFolder.IsEnabled = true;
 
-                if (_createdAudioFiles.Count > 1)
-                {
-                    btnPlayNext.IsEnabled = true;
-                    btnPlayPrevious.IsEnabled = false;
-                }
+        //        if (_createdAudioFiles.Count > 1)
+        //        {
+        //            btnPlayNext.IsEnabled = true;
+        //            btnPlayPrevious.IsEnabled = false;
+        //        }
 
-                _playbackService.LoadPlaylist(_createdAudioFiles);
-            }
-        }
+        //        _playbackService.LoadPlaylist(_createdAudioFiles);
+        //    }
+        //}
 
-        private void PlayPause_Click(object sender, RoutedEventArgs e)
-        {
-            if (_playbackService.IsPlaying)
-            {
-                _playbackService.Pause();
-                btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
-                _playbackTimer.Stop();
-            }
-            else if (_playbackService.IsPaused)
-            {
-                _playbackService.Resume();
-                btnPlayPause.Content = new TextBlock { Text = "⏸ Pause" };
-                _playbackTimer.Start();
-            }
-            else
-            {
-                if (cmbCreatedFiles.SelectedIndex >= 0)
-                {
-                    _playbackService.Play(cmbCreatedFiles.SelectedIndex);
-                    btnPlayPause.Content = new TextBlock { Text = "⏸ Pause" };
-                    _playbackTimer.Start();
-                }
-            }
-        }
+        //private async void PlayPause_Click(object sender, RoutedEventArgs e)
+        //{
+        //    // If already playing/paused, handle pause/resume
+            //if (_playbackService.IsPlaying)
+            //{
+            //    _playbackService.Pause();
+            //    btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
+            //    _playbackTimer.Stop();
+            //    return;
+            //}
+            //else if (_playbackService.IsPaused)
+            //{
+            //    _playbackService.Resume();
+            //    btnPlayPause.Content = new TextBlock { Text = "⏸ Pause" };
+            //    _playbackTimer.Start();
+            //    return;
 
-        private void PlayPrevious_Click(object sender, RoutedEventArgs e)
-        {
-            if (_playbackService.CurrentIndex > 0)
-            {
-                _playbackService.PlayPrevious();
-                cmbCreatedFiles.SelectedIndex = _playbackService.CurrentIndex;
-            }
-        }
 
-        private void PlayNext_Click(object sender, RoutedEventArgs e)
-        {
-            if (_playbackService.CurrentIndex < _createdAudioFiles.Count - 1)
-            {
-                _playbackService.PlayNext();
-                cmbCreatedFiles.SelectedIndex = _playbackService.CurrentIndex;
-            }
-        }
+        //private async Task PlayFromCursor()
+        //{
+        //    try
+        //    {
+        //        // Check if service is selected
+        //        if (cmbTTSEngine.SelectedIndex >= 0 && cmbTTSEngine.SelectedIndex < _ttsServices.Count)
+        //        {
+        //            _currentService = _ttsServices[cmbTTSEngine.SelectedIndex];
+        //        }
 
-        private void StopPlayback_Click(object sender, RoutedEventArgs e)
-        {
-            _playbackService.Stop();
-            _playbackTimer.Stop();
-            btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
-            playbackProgress.Value = 0;
-            txtPlaybackTime.Text = "00:00 / 00:00";
-            txtCurrentFile.Text = "Playback stopped";
-        }
+        //        if (_currentService == null)
+        //        {
+        //            MessageBox.Show("Please select a TTS service first.", "No Service Selected",
+        //                MessageBoxButton.OK, MessageBoxImage.Warning);
+        //            return;
+        //        }
 
-        private void CreatedFile_Changed(object sender, SelectionChangedEventArgs e)
-        {
-            if (cmbCreatedFiles.SelectedIndex >= 0 && cmbCreatedFiles.SelectedIndex < _createdAudioFiles.Count)
-            {
-                txtCurrentFile.Text = Path.GetFileName(_createdAudioFiles[cmbCreatedFiles.SelectedIndex]);
-            }
-        }
+        //        if (cmbVoices.SelectedIndex < 0)
+        //        {
+        //            MessageBox.Show("Please select a voice first.", "No Voice Selected",
+        //                MessageBoxButton.OK, MessageBoxImage.Warning);
+        //            return;
+        //        }
+
+        //        // Get text from cursor to end (or all text if no cursor)
+        //        string textToPlay;
+        //        TextPointer startPos;
+
+        //        if (rtbTextContent.CaretPosition != null &&
+        //            rtbTextContent.CaretPosition.CompareTo(rtbTextContent.Document.ContentStart) > 0)
+        //        {
+        //            // Play from cursor position to end
+        //            startPos = rtbTextContent.CaretPosition;
+        //            var endPos = rtbTextContent.Document.ContentEnd;
+        //            textToPlay = new TextRange(startPos, endPos).Text;
+
+        //            LogMessage($"Playing from cursor position ({textToPlay.Length} chars remaining)");
+        //        }
+        //        else
+        //        {
+        //            // Play from beginning
+        //            var textRange = new TextRange(rtbTextContent.Document.ContentStart, rtbTextContent.Document.ContentEnd);
+        //            textToPlay = textRange.Text;
+
+        //            LogMessage($"Playing from beginning ({textToPlay.Length} chars)");
+        //        }
+
+        //        if (string.IsNullOrWhiteSpace(textToPlay))
+        //        {
+        //            MessageBox.Show("No text to play from this position.", "No Text",
+        //                MessageBoxButton.OK, MessageBoxImage.Information);
+        //            return;
+        //        }
+
+        //        // Clean the text
+        //        string cleanedText = textToPlay;
+        //        cleanedText = Regex.Replace(cleanedText, @"<split>", "", RegexOptions.IgnoreCase);
+        //        cleanedText = Regex.Replace(cleanedText, @"<service=\d+>", "", RegexOptions.IgnoreCase);
+        //        cleanedText = Regex.Replace(cleanedText, @"<voice=\d+>", "", RegexOptions.IgnoreCase);
+        //        cleanedText = Regex.Replace(cleanedText, @"<vid=[^>]+>", "", RegexOptions.IgnoreCase);
+        //        cleanedText = Regex.Replace(cleanedText, @"<label=\d+>", "", RegexOptions.IgnoreCase);
+        //        cleanedText = _ssmlProcessingService.StripComments(cleanedText);
+        //        cleanedText = cleanedText.Trim();
+
+        //        if (string.IsNullOrWhiteSpace(cleanedText))
+        //        {
+        //            MessageBox.Show("No content to play after removing control tags.", "No Content",
+        //                MessageBoxButton.OK, MessageBoxImage.Information);
+        //            return;
+        //        }
+
+        //        // Update UI
+        //        btnConvert.IsEnabled = false;
+        //        btnPlayPause.Content = new TextBlock { Text = "⏸ Generating..." };
+        //        btnStopPlayback.IsEnabled = true;
+
+        //        // Create temp file
+        //        string tempFile = Path.Combine(Path.GetTempPath(), $"tts_play_{Guid.NewGuid()}");
+
+        //        var settings = new ConversionSettings
+        //        {
+        //            RateValue = sliderRate.Value,
+        //            VolumeValue = sliderVolume.Value,
+        //            OutputFormatIndex = 0
+        //        };
+
+        //        LogMessage($"Generating audio with {_currentService.Name}...");
+
+        //        bool success = await _currentService.TestVoiceAsync(
+        //            cleanedText, tempFile, cmbVoices.SelectedIndex, settings);
+
+        //        // Check for the file
+        //        string actualFile = tempFile;
+        //        if (!File.Exists(tempFile) && File.Exists(tempFile + ".wav"))
+        //        {
+        //            actualFile = tempFile + ".wav";
+        //        }
+
+        //        if (success && File.Exists(actualFile))
+        //        {
+        //            LogMessage($"Playing audio: {new FileInfo(actualFile).Length} bytes");
+
+        //            _playbackService.Stop();
+        //            _playbackService.LoadPlaylist(new List<string> { actualFile });
+        //            _playbackService.Play(0);
+
+        //            btnPlayPause.Content = new TextBlock { Text = "⏸ Pause" };
+        //            _playbackTimer.Start();
+
+        //            txtCurrentFile.Text = "Playing from editor";
+
+        //            // Re-enable convert button when done
+        //            EventHandler completionHandler = null;
+        //            completionHandler = (s, args) =>
+        //            {
+        //                Dispatcher.Invoke(() =>
+        //                {
+        //                    btnConvert.IsEnabled = true;
+        //                    btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
+        //                    btnStopPlayback.IsEnabled = false;
+        //                    txtCurrentFile.Text = "Playback complete";
+        //                    _playbackTimer.Stop();
+        //                    LogMessage("Playback completed");
+        //                });
+        //                _playbackService.PlaybackCompleted -= completionHandler;
+        //            };
+        //            _playbackService.PlaybackCompleted += completionHandler;
+        //        }
+        //        else
+        //        {
+        //            LogMessage($"Failed to generate audio");
+        //            MessageBox.Show($"Failed to generate audio.\n\nService: {_currentService.Name}\nVoice: {cmbVoices.SelectedIndex}",
+        //                "Playback Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        //            btnConvert.IsEnabled = true;
+        //            btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
+        //            btnStopPlayback.IsEnabled = false;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LogMessage($"Error playing text: {ex.Message}");
+        //        MessageBox.Show($"Error playing text:\n\n{ex.Message}", "Error",
+        //            MessageBoxButton.OK, MessageBoxImage.Error);
+        //        btnConvert.IsEnabled = true;
+        //        btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
+        //        btnStopPlayback.IsEnabled = false;
+        //    }
+        //}
+        //private void PlayPrevious_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (_playbackService.CurrentIndex > 0)
+        //    {
+        //        _playbackService.PlayPrevious();
+        //        cmbCreatedFiles.SelectedIndex = _playbackService.CurrentIndex;
+        //    }
+        //}
+
+        //private void PlayNext_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (_playbackService.CurrentIndex < _createdAudioFiles.Count - 1)
+        //    {
+        //        _playbackService.PlayNext();
+        //        cmbCreatedFiles.SelectedIndex = _playbackService.CurrentIndex;
+        //    }
+        //}
+
+        //private void StopPlayback_Click(object sender, RoutedEventArgs e)
+        //{
+        //    _playbackService.Stop();
+        //    _playbackTimer.Stop();
+        //    btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
+        //    playbackProgress.Value = 0;
+        //    txtPlaybackTime.Text = "00:00 / 00:00";
+        //    txtCurrentFile.Text = "Playback stopped";
+        //}
+
+        //private void CreatedFile_Changed(object sender, SelectionChangedEventArgs e)
+        //{
+        //    if (cmbCreatedFiles.SelectedIndex >= 0 && cmbCreatedFiles.SelectedIndex < _createdAudioFiles.Count)
+        //    {
+        //        txtCurrentFile.Text = Path.GetFileName(_createdAudioFiles[cmbCreatedFiles.SelectedIndex]);
+        //    }
+        //}
 
         private void OpenFolder_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(_lastOutputFolder) && Directory.Exists(_lastOutputFolder))
-            {
-                _fileService.OpenFolderInExplorer(_lastOutputFolder);
-            }
+            // This is now handled by Audio File Manager
+            AudioFileManager_Click(sender, e);
         }
 
-        private void PlaybackTimer_Tick(object sender, EventArgs e)
-        {
-            if (_playbackService.IsPlaying)
-            {
-                var currentTime = _playbackService.CurrentPosition;
-                var totalTime = _playbackService.TotalDuration;
+        //private void PlaybackTimer_Tick(object sender, EventArgs e)
+        //{
+        //    if (_playbackService.IsPlaying)
+        //    {
+        //        var currentTime = _playbackService.CurrentPosition;
+        //        var totalTime = _playbackService.TotalDuration;
 
-                playbackProgress.Maximum = totalTime.TotalSeconds;
-                playbackProgress.Value = currentTime.TotalSeconds;
+        //        playbackProgress.Maximum = totalTime.TotalSeconds;
+        //        playbackProgress.Value = currentTime.TotalSeconds;
 
-                txtPlaybackTime.Text = $"{currentTime:mm\\:ss} / {totalTime:mm\\:ss}";
-            }
-        }
+        //        txtPlaybackTime.Text = $"{currentTime:mm\\:ss} / {totalTime:mm\\:ss}";
+        //    }
+        //}
 
-        private void PlaybackService_PlaybackStateChanged(object sender, PlaybackStateChangedEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                if (e.IsPlaying)
-                {
-                    btnPlayPause.Content = new TextBlock { Text = "⏸ Pause" };
-                    txtCurrentFile.Text = $"Playing: {Path.GetFileName(_playbackService.CurrentFile)}";
-                    _playbackTimer.Start();
+        //private void PlaybackService_PlaybackStateChanged(object sender, PlaybackStateChangedEventArgs e)
+        //{
+        //    Dispatcher.Invoke(() =>
+        //    {
+        //        if (e.IsPlaying)
+        //        {
+        //            btnPlayPause.Content = new TextBlock { Text = "⏸ Pause" };
+        //            txtCurrentFile.Text = $"Playing: {Path.GetFileName(_playbackService.CurrentFile)}";
+        //            _playbackTimer.Start();
 
-                    btnPlayPrevious.IsEnabled = _playbackService.CurrentIndex > 0;
-                    btnPlayNext.IsEnabled = _playbackService.CurrentIndex < _createdAudioFiles.Count - 1;
-                }
-                else if (e.IsPaused)
-                {
-                    btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
-                    _playbackTimer.Stop();
-                }
-                else
-                {
-                    btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
-                    _playbackTimer.Stop();
-                }
-            });
-        }
+        //            btnPlayPrevious.IsEnabled = _playbackService.CurrentIndex > 0;
+        //            btnPlayNext.IsEnabled = _playbackService.CurrentIndex < _createdAudioFiles.Count - 1;
+        //        }
+        //        else if (e.IsPaused)
+        //        {
+        //            btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
+        //            _playbackTimer.Stop();
+        //        }
+        //        else
+        //        {
+        //            btnPlayPause.Content = new TextBlock { Text = "▶ Play" };
+        //            _playbackTimer.Stop();
+        //        }
+        //    });
+        //}
 
-        private void PlaybackService_PlaybackCompleted(object sender, EventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                if (_playbackService.CurrentIndex < _createdAudioFiles.Count - 1)
-                {
-                    _playbackService.PlayNext();
-                    cmbCreatedFiles.SelectedIndex = _playbackService.CurrentIndex;
-                }
-                else
-                {
-                    StopPlayback_Click(sender, new RoutedEventArgs());
-                    txtCurrentFile.Text = "Playback complete";
-                }
-            });
-        }
+        //private void PlaybackService_PlaybackCompleted(object sender, EventArgs e)
+        //{
+        //    Dispatcher.Invoke(() =>
+        //    {
+        //        if (_playbackService.CurrentIndex < _createdAudioFiles.Count - 1)
+        //        {
+        //            _playbackService.PlayNext();
+        //            cmbCreatedFiles.SelectedIndex = _playbackService.CurrentIndex;
+        //        }
+        //        else
+        //        {
+        //            StopPlayback_Click(sender, new RoutedEventArgs());
+        //            txtCurrentFile.Text = "Playback complete";
+        //        }
+        //    });
+        //}
         // Add these methods to MainWindow.xaml.cs in the existing #region or create #region Help
 
         #region Help Dialogs
@@ -3149,11 +3707,16 @@ namespace TTS3
                     {
                         _createdAudioFiles.Add(item.FullPath);
                     }
+                    var result = MessageBox.Show(
+                        $"Conversion completed successfully!\n\nCreated {_createdAudioFiles.Count} audio file(s).\n\nOpen Audio File Manager to play them?",
+                        "Success",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Information);
 
-                    UpdatePlaybackControls();
-
-                    MessageBox.Show($"Loaded {listBox.SelectedItems.Count} file(s) to main player.",
-                        "Files Loaded", MessageBoxButton.OK, MessageBoxImage.Information);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        AudioFileManager_Click(sender, e);
+                    }
                 }
             };
 
@@ -3721,11 +4284,11 @@ namespace TTS3
                 }
             }
             // Space for Play/Pause when not in text editor
-            else if (e.Key == Key.Space && !rtbTextContent.IsFocused && btnPlayPause.IsEnabled)
-            {
-                PlayPause_Click(sender, e);
-                e.Handled = true;
-            }
+            //else if (e.Key == Key.Space && !rtbTextContent.IsFocused && btnPlayPause.IsEnabled)
+            //{
+            //    PlayPause_Click(sender, e);
+            //    e.Handled = true;
+            //}
             // Ctrl+Shift+C for Colorize
             else if (e.Key == Key.C && Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
             {
@@ -4119,6 +4682,717 @@ namespace TTS3
                 txtLog.ScrollToEnd();
             });
         }
+        // Add a ToolBox panel with draggable SSML tags
+        private void InitializeDragDropTags()
+        {
+            var tagToolbox = new ListBox
+            {
+                AllowDrop = true,
+                SelectionMode = SelectionMode.Single
+            };
 
+            // Draggable tag items
+            var tags = new[]
+            {
+        "emphasis", "break", "prosody", "say-as",
+        "voice", "split", "service"
+    };
+
+            foreach (var tag in tags)
+            {
+                var item = new ListBoxItem
+                {
+                    Content = tag,
+                    Tag = tag
+                };
+                item.PreviewMouseLeftButtonDown += TagItem_PreviewMouseDown;
+                tagToolbox.Items.Add(item);
+            }
+
+            rtbTextContent.AllowDrop = true;
+            rtbTextContent.Drop += RichTextBox_Drop;
+        }
+
+        private void TagItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var item = sender as ListBoxItem;
+            if (item != null)
+            {
+                DragDrop.DoDragDrop(item, item.Tag.ToString(), DragDropEffects.Copy);
+            }
+        }
+
+        private void RichTextBox_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(string)))
+            {
+                string tagName = e.Data.GetData(typeof(string)) as string;
+
+                // Get drop position
+                Point position = e.GetPosition(rtbTextContent);
+                TextPointer dropPos = rtbTextContent.GetPositionFromPoint(position, true);
+
+                if (dropPos != null)
+                {
+                    // Insert appropriate tag based on type
+                    string tagToInsert = GenerateTagFromType(tagName);
+                    dropPos.InsertTextInRun(tagToInsert);
+                }
+            }
+        }
+        #region Drag and Drop
+        #region Click-to-Wrap SSML Tags
+
+        private void Tag_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Border border && border.Tag != null)
+            {
+                string tagType = border.Tag.ToString();
+                InsertOrWrapTag(tagType);
+            }
+        }
+
+        private void InsertOrWrapTag(string tagType)
+        {
+            var selection = rtbTextContent.Selection;
+
+            if (!selection.IsEmpty)
+            {
+                // Wrap selected text
+                WrapSelectionWithTag(tagType, selection.Text);
+            }
+            else
+            {
+                // Insert at cursor
+                InsertTagAtCursor(tagType);
+            }
+        }
+
+        private void WrapSelectionWithTag(string tagType, string selectedText)
+        {
+            string wrappedText = "";
+
+            switch (tagType)
+            {
+                case "emphasis":
+                    wrappedText = $"<emphasis level=\"strong\">{selectedText}</emphasis>";
+                    LogMessage($"Wrapped text with emphasis");
+                    break;
+
+                case "prosody":
+                    wrappedText = $"<prosody rate=\"medium\">{selectedText}</prosody>";
+                    LogMessage($"Wrapped text with prosody");
+                    break;
+
+                case "say-as":
+                    wrappedText = $"<say-as interpret-as=\"cardinal\">{selectedText}</say-as>";
+                    LogMessage($"Wrapped text with say-as");
+                    break;
+
+                case "sub":
+                    wrappedText = $"<sub alias=\"substitute\">{selectedText}</sub>";
+                    LogMessage($"Wrapped text with sub");
+                    break;
+
+                default:
+                    // Self-closing or control tags can't wrap - insert at cursor instead
+                    MessageBox.Show($"The <{tagType}> tag cannot wrap text. It will be inserted at cursor position instead.",
+                        "Cannot Wrap", MessageBoxButton.OK, MessageBoxImage.Information);
+                    InsertTagAtCursor(tagType);
+                    return;
+            }
+
+            rtbTextContent.Selection.Text = wrappedText;
+            rtbTextContent.Focus();
+        }
+        private void AudioFileManager_Click(object sender, RoutedEventArgs e)
+        {
+            var managerWindow = new Window
+            {
+                Title = "Audio File Manager",
+                Width = 800,
+                Height = 600,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Owner = this
+            };
+
+            var mainGrid = new Grid();
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            // Top panel - Folder selection
+            var topPanel = new DockPanel { Margin = new Thickness(10) };
+            var selectFolderButton = new Button
+            {
+                Content = "📁 Select Folder...",
+                Width = 120,
+                Height = 30,
+                Margin = new Thickness(0, 0, 10, 0)
+            };
+            DockPanel.SetDock(selectFolderButton, Dock.Left);
+
+            var currentFolderLabel = new TextBlock
+            {
+                Text = string.IsNullOrEmpty(_lastOutputFolder) ? "No folder selected" : _lastOutputFolder,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontStyle = FontStyles.Italic,
+                TextTrimming = TextTrimming.CharacterEllipsis
+            };
+
+            topPanel.Children.Add(selectFolderButton);
+            topPanel.Children.Add(currentFolderLabel);
+
+            // File list
+            var listBox = new ListBox
+            {
+                Margin = new Thickness(10, 0, 10, 10),
+                FontFamily = new FontFamily("Consolas"),
+                SelectionMode = SelectionMode.Extended
+            };
+
+            // Playback controls
+            var playbackPanel = new Grid { Margin = new Thickness(10) };
+            playbackPanel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            playbackPanel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            playbackPanel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var controlButtonsPanel = new StackPanel { Orientation = Orientation.Horizontal };
+
+            var playButton = new Button
+            {
+                Content = "▶ Play",
+                Width = 80,
+                Height = 35,
+                Margin = new Thickness(0, 0, 5, 0),
+                IsEnabled = false
+            };
+
+            var stopButton = new Button
+            {
+                Content = "⏹ Stop",
+                Width = 80,
+                Height = 35,
+                Margin = new Thickness(0, 0, 5, 0),
+                IsEnabled = false
+            };
+
+            var autoPlayCheckBox = new CheckBox
+            {
+                Content = "Auto-play next",
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(10, 0, 0, 0),
+                IsChecked = false
+            };
+
+            controlButtonsPanel.Children.Add(playButton);
+            controlButtonsPanel.Children.Add(stopButton);
+            controlButtonsPanel.Children.Add(autoPlayCheckBox);
+
+            Grid.SetColumn(controlButtonsPanel, 0);
+            playbackPanel.Children.Add(controlButtonsPanel);
+
+            // Progress info
+            var progressPanel = new StackPanel { Margin = new Thickness(10, 0, 10, 0) };
+
+            var nowPlayingLabel = new TextBlock
+            {
+                Text = "No file playing",
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(0, 0, 0, 5)
+            };
+
+            var progressBar = new ProgressBar
+            {
+                Height = 8,
+                Margin = new Thickness(0, 0, 0, 5)
+            };
+
+            var timeLabel = new TextBlock
+            {
+                Text = "00:00 / 00:00",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                FontFamily = new FontFamily("Consolas"),
+                FontSize = 11
+            };
+
+            progressPanel.Children.Add(nowPlayingLabel);
+            progressPanel.Children.Add(progressBar);
+            progressPanel.Children.Add(timeLabel);
+
+            Grid.SetColumn(progressPanel, 1);
+            playbackPanel.Children.Add(progressPanel);
+
+            // Volume control
+            var volumePanel = new StackPanel { Margin = new Thickness(10, 0, 0, 0) };
+
+            var volumeLabel = new TextBlock
+            {
+                Text = "Volume:",
+                FontSize = 11,
+                Margin = new Thickness(0, 0, 0, 2)
+            };
+
+            var volumeSlider = new Slider
+            {
+                Width = 100,
+                Minimum = 0,
+                Maximum = 100,
+                Value = 100,
+                TickFrequency = 10,
+                IsSnapToTickEnabled = true
+            };
+
+            var volumeValueLabel = new TextBlock
+            {
+                Text = "100%",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                FontSize = 10
+            };
+
+            volumeSlider.ValueChanged += (s, args) =>
+            {
+                volumeValueLabel.Text = $"{(int)volumeSlider.Value}%";
+            };
+
+            volumePanel.Children.Add(volumeLabel);
+            volumePanel.Children.Add(volumeSlider);
+            volumePanel.Children.Add(volumeValueLabel);
+
+            Grid.SetColumn(volumePanel, 2);
+            playbackPanel.Children.Add(volumePanel);
+
+            // Bottom buttons
+            var bottomPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Margin = new Thickness(10)
+            };
+
+            var mergeButton = new Button
+            {
+                Content = "Merge Selected Files...",
+                Width = 150,
+                Height = 30,
+                Margin = new Thickness(5),
+                IsEnabled = false,
+                Background = new SolidColorBrush(Color.FromRgb(100, 180, 100))
+            };
+
+            var deleteButton = new Button
+            {
+                Content = "Delete Selected",
+                Width = 120,
+                Height = 30,
+                Margin = new Thickness(5),
+                IsEnabled = false,
+                Background = new SolidColorBrush(Color.FromRgb(220, 100, 100))
+            };
+
+            var closeButton = new Button
+            {
+                Content = "Close",
+                Width = 80,
+                Height = 30,
+                Margin = new Thickness(5)
+            };
+
+            bottomPanel.Children.Add(mergeButton);
+            bottomPanel.Children.Add(deleteButton);
+            bottomPanel.Children.Add(closeButton);
+
+            // Layout
+            Grid.SetRow(topPanel, 0);
+            Grid.SetRow(listBox, 1);
+            Grid.SetRow(playbackPanel, 2);
+            Grid.SetRow(bottomPanel, 3);
+
+            mainGrid.Children.Add(topPanel);
+            mainGrid.Children.Add(listBox);
+            mainGrid.Children.Add(playbackPanel);
+            mainGrid.Children.Add(bottomPanel);
+
+            managerWindow.Content = mainGrid;
+
+            // Audio playback objects
+            var managerPlaybackService = new AudioPlaybackService();
+            var managerTimer = new System.Windows.Threading.DispatcherTimer();
+            managerTimer.Interval = TimeSpan.FromMilliseconds(100);
+
+            managerTimer.Tick += (s, args) =>
+            {
+                if (managerPlaybackService.IsPlaying)
+                {
+                    var currentTime = managerPlaybackService.CurrentPosition;
+                    var totalTime = managerPlaybackService.TotalDuration;
+
+                    progressBar.Maximum = totalTime.TotalSeconds;
+                    progressBar.Value = currentTime.TotalSeconds;
+
+                    timeLabel.Text = $"{currentTime:mm\\:ss} / {totalTime:mm\\:ss}";
+                }
+            };
+
+            // Select folder functionality
+            selectFolderButton.Click += (s, args) =>
+            {
+                var folderDialog = new System.Windows.Forms.FolderBrowserDialog
+                {
+                    Description = "Select folder containing audio files",
+                    SelectedPath = _lastOutputFolder
+                };
+
+                if (folderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    string selectedFolder = folderDialog.SelectedPath;
+                    currentFolderLabel.Text = selectedFolder;
+
+                    listBox.Items.Clear();
+
+                    var audioFiles = _fileService.GetAudioFilesInDirectory(selectedFolder);
+
+                    foreach (var file in audioFiles)
+                    {
+                        listBox.Items.Add(file);
+                    }
+
+                    if (audioFiles.Count > 0)
+                    {
+                        playButton.IsEnabled = true;
+                        deleteButton.IsEnabled = true;
+                    }
+                }
+            };
+
+            // Auto-load last output folder if available
+            if (!string.IsNullOrEmpty(_lastOutputFolder) && Directory.Exists(_lastOutputFolder))
+            {
+                var audioFiles = _fileService.GetAudioFilesInDirectory(_lastOutputFolder);
+                foreach (var file in audioFiles)
+                {
+                    listBox.Items.Add(file);
+                }
+                if (audioFiles.Count > 0)
+                {
+                    playButton.IsEnabled = true;
+                    deleteButton.IsEnabled = true;
+                }
+            }
+
+            // Selection changed
+            listBox.SelectionChanged += (s, args) =>
+            {
+                mergeButton.IsEnabled = listBox.SelectedItems.Count >= 2;
+                deleteButton.IsEnabled = listBox.SelectedItems.Count > 0;
+            };
+
+            // Play button
+            playButton.Click += (s, args) =>
+            {
+                if (listBox.SelectedItem is AudioFileItem selectedItem)
+                {
+                    try
+                    {
+                        managerPlaybackService.Stop();
+                        managerPlaybackService.LoadPlaylist(new List<string> { selectedItem.FullPath });
+                        managerPlaybackService.SetVolume((float)(volumeSlider.Value / 100.0));
+                        managerPlaybackService.Play(0);
+
+                        managerTimer.Start();
+
+                        nowPlayingLabel.Text = $"Playing: {selectedItem.DisplayName}";
+                        stopButton.IsEnabled = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error playing file:\n{ex.Message}", "Playback Error",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            };
+
+            // Stop button
+            stopButton.Click += (s, args) =>
+            {
+                managerPlaybackService.Stop();
+                managerTimer.Stop();
+                nowPlayingLabel.Text = "Playback stopped";
+                progressBar.Value = 0;
+                timeLabel.Text = "00:00 / 00:00";
+                stopButton.IsEnabled = false;
+            };
+
+            // Volume control
+            volumeSlider.ValueChanged += (s, args) =>
+            {
+                managerPlaybackService.SetVolume((float)(volumeSlider.Value / 100.0));
+            };
+
+            // Double-click to play
+            listBox.MouseDoubleClick += (s, args) =>
+            {
+                if (listBox.SelectedItem != null)
+                {
+                    playButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                }
+            };
+
+            // Merge button
+            mergeButton.Click += async (s, args) =>
+            {
+                if (listBox.SelectedItems.Count < 2)
+                {
+                    MessageBox.Show("Please select at least 2 files to merge.", "Merge Files",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                var selectedFiles = listBox.SelectedItems
+                    .Cast<AudioFileItem>()
+                    .OrderBy(item => item.FullPath)
+                    .Select(item => item.FullPath)
+                    .ToList();
+
+                var saveDialog = new SaveFileDialog
+                {
+                    Filter = "WAV files (*.wav)|*.wav|MP3 files (*.mp3)|*.mp3",
+                    FileName = "merged_output.wav",
+                    InitialDirectory = Path.GetDirectoryName(selectedFiles[0])
+                };
+
+                if (saveDialog.ShowDialog() == true)
+                {
+                    try
+                    {
+                        mergeButton.IsEnabled = false;
+                        mergeButton.Content = "Merging...";
+
+                        await _mergeService.MergeAudioFilesAsync(selectedFiles, saveDialog.FileName);
+
+                        mergeButton.Content = "Merge Selected Files...";
+                        mergeButton.IsEnabled = true;
+
+                        MessageBox.Show($"Successfully merged {selectedFiles.Count} files!", "Merge Complete",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        LogMessage($"Merged {selectedFiles.Count} files into {Path.GetFileName(saveDialog.FileName)}");
+                    }
+                    catch (Exception ex)
+                    {
+                        mergeButton.Content = "Merge Selected Files...";
+                        mergeButton.IsEnabled = true;
+
+                        MessageBox.Show($"Error merging files:\n\n{ex.Message}", "Merge Error",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            };
+
+            // Delete button
+            deleteButton.Click += (s, args) =>
+            {
+                if (listBox.SelectedItems.Count == 0) return;
+
+                var result = MessageBox.Show(
+                    $"Are you sure you want to delete {listBox.SelectedItems.Count} file(s)?\n\nThis cannot be undone!",
+                    "Confirm Delete",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    var itemsToDelete = listBox.SelectedItems.Cast<AudioFileItem>().ToList();
+                    foreach (var item in itemsToDelete)
+                    {
+                        try
+                        {
+                            File.Delete(item.FullPath);
+                            listBox.Items.Remove(item);
+                            LogMessage($"Deleted: {item.DisplayName}");
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Error deleting {item.DisplayName}:\n{ex.Message}",
+                                "Delete Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+            };
+
+            // Playback completed
+            managerPlaybackService.PlaybackCompleted += (s, args) =>
+            {
+                managerTimer.Stop();
+
+                if (autoPlayCheckBox.IsChecked == true)
+                {
+                    int currentIndex = listBox.SelectedIndex;
+                    if (currentIndex < listBox.Items.Count - 1)
+                    {
+                        listBox.SelectedIndex = currentIndex + 1;
+                        playButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    }
+                    else
+                    {
+                        nowPlayingLabel.Text = "Playback complete";
+                        progressBar.Value = 0;
+                        timeLabel.Text = "00:00 / 00:00";
+                    }
+                }
+                else
+                {
+                    nowPlayingLabel.Text = "Playback stopped";
+                    progressBar.Value = 0;
+                    timeLabel.Text = "00:00 / 00:00";
+                }
+            };
+
+            closeButton.Click += (s, args) => managerWindow.Close();
+
+            // Cleanup
+            managerWindow.Closing += (s, args) =>
+            {
+                managerTimer.Stop();
+                managerPlaybackService.Dispose();
+            };
+
+            managerWindow.ShowDialog();
+        }
+
+        private void InsertTagAtCursor(string tagType)
+        {
+            string tagToInsert = GenerateTagFromType(tagType);
+
+            var caretPos = rtbTextContent.CaretPosition;
+
+            // Check if it's a tag pair (opening and closing)
+            if (tagToInsert.Contains("</"))
+            {
+                // Extract opening and closing tags
+                var match = Regex.Match(tagToInsert, @"<([^/>]+)>.*?</\1>");
+
+                if (match.Success)
+                {
+                    string tagName = match.Groups[1].Value;
+
+                    // Extract just the tag attributes without the tag name
+                    var openTagMatch = Regex.Match(tagToInsert, @"<([^>]+)>");
+                    string openTag = openTagMatch.Success ? $"<{openTagMatch.Groups[1].Value}>" : $"<{tagName}>";
+                    string closeTag = $"</{tagName.Split(' ')[0]}>";
+
+                    // Insert opening tag
+                    caretPos.InsertTextInRun(openTag);
+
+                    // Save position between tags
+                    var middlePos = caretPos;
+
+                    // Insert closing tag
+                    caretPos.InsertTextInRun(closeTag);
+
+                    // Move cursor between tags
+                    rtbTextContent.CaretPosition = middlePos;
+
+                    LogMessage($"Inserted {tagType} tags at cursor");
+                }
+                else
+                {
+                    // Fallback - just insert the whole thing
+                    caretPos.InsertTextInRun(tagToInsert);
+                    LogMessage($"Inserted {tagType} tag at cursor");
+                }
+            }
+            else
+            {
+                // Self-closing or simple tag - just insert it
+                caretPos.InsertTextInRun(tagToInsert);
+                LogMessage($"Inserted {tagType} tag at cursor");
+            }
+
+            rtbTextContent.Focus();
+        }
+        //private string GenerateTagFromType(string tagType)
+        //{
+        //    switch (tagType)
+        //    {
+        //        case "split":
+        //            return "<split>";
+        //        case "voice":
+        //            return "<voice=1>";
+        //        case "service":
+        //            return "<service=1>";
+        //        case "label":
+        //            return "<label=1>";
+        //        case "comment":
+        //            return "<comment=note>";
+        //        case "emphasis":
+        //            return "<emphasis level=\"strong\"></emphasis>";
+        //        case "break":
+        //            return "<break time=\"1s\"/>";
+        //        case "prosody":
+        //            return "<prosody rate=\"medium\"></prosody>";
+        //        case "say-as":
+        //            return "<say-as interpret-as=\"cardinal\"></say-as>";
+        //        case "sub":
+        //            return "<sub alias=\"substitute\"></sub>";
+        //        default:
+        //            return $"<{tagType}>";
+        //    }
+        //}
+
+        #endregion
+        private string GenerateTagFromType(string tagType)
+        {
+            switch (tagType)
+            {
+                case "split":
+                    return "<split>";
+                case "voice":
+                    return "<voice=1>";
+                case "service":
+                    return "<service=1>";
+                case "comment":
+                    return "<comment=note>";
+                case "emphasis":
+                    return "<emphasis level=\"strong\"></emphasis>";
+                case "break":
+                    return "<break time=\"1s\"/>";
+                case "prosody":
+                    return "<prosody rate=\"medium\"></prosody>";
+                case "say-as":
+                    return "<say-as interpret-as=\"cardinal\"></say-as>";
+                default:
+                    return $"<{tagType}>";
+            }
+        }
+
+        //private void WrapSelectionWithTag(string tagType)
+        //{
+        //    string selectedText = rtbTextContent.Selection.Text;
+        //    string wrappedText = "";
+
+        //    switch (tagType)
+        //    {
+        //        case "emphasis":
+        //            wrappedText = $"<emphasis level=\"strong\">{selectedText}</emphasis>";
+        //            break;
+        //        case "prosody":
+        //            wrappedText = $"<prosody rate=\"medium\">{selectedText}</prosody>";
+        //            break;
+        //        case "say-as":
+        //            wrappedText = $"<say-as interpret-as=\"cardinal\">{selectedText}</say-as>";
+        //            break;
+        //        default:
+        //            // Self-closing or control tags don't wrap
+        //            rtbTextContent.Selection.Text = "";
+        //            rtbTextContent.CaretPosition.InsertTextInRun(GenerateTagFromType(tagType));
+        //            return;
+        //    }
+
+        //    rtbTextContent.Selection.Text = wrappedText;
+        //}
+
+        #endregion
     }
 }
