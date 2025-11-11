@@ -1,0 +1,66 @@
+<!-- ==========================================
+   ADD THESE TO YOUR MainWindow.xaml
+   Add to the Tools menu section
+   ========================================== -->
+
+<MenuItem Header="Tools">
+    <MenuItem Header="Audio File Browser..." Click="AudioBrowser_Click">
+        <MenuItem.Icon>
+            <TextBlock Text="🎵"/>
+        </MenuItem.Icon>
+    </MenuItem>
+    <MenuItem Header="Audio File Manager..." Click="AudioFileManager_Click">
+        <MenuItem.Icon>
+            <TextBlock Text="🎧"/>
+        </MenuItem.Icon>
+    </MenuItem>
+    <Separator/>
+    
+    <!-- ADD THESE NEW MENU ITEMS: -->
+    <MenuItem Header="SSML Template Library..." Click="ShowSSMLTemplateLibrary_Click">
+        <MenuItem.Icon>
+            <TextBlock Text="📚"/>
+        </MenuItem.Icon>
+    </MenuItem>
+    <MenuItem Header="Analyze Math &amp; Suggest SSML..." Click="AnalyzeMathAndSuggest_Click">
+        <MenuItem.Icon>
+            <TextBlock Text="🔢"/>
+        </MenuItem.Icon>
+    </MenuItem>
+    <Separator/>
+    
+    <MenuItem Header="Strip/Ignore Characters..." Click="StripCharacters_Click">
+        <MenuItem.Icon>
+            <TextBlock Text="🧹"/>
+        </MenuItem.Icon>
+    </MenuItem>
+    <MenuItem Header="Clean Text" Click="CleanText_Click">
+        <MenuItem.Icon>
+            <TextBlock Text="✨"/>
+        </MenuItem.Icon>
+    </MenuItem>
+</MenuItem>
+
+<!-- ==========================================
+   ALTERNATIVE: Add toolbar buttons
+   Add these to the Quick Insert Toolbar
+   ========================================== -->
+
+<ToolBar Grid.Row="0" Height="35">
+    <!-- ... existing buttons ... -->
+    
+    <Separator/>
+    
+    <!-- ADD THESE NEW BUTTONS: -->
+    <Button Name="btnSSMLLibrary" Click="ShowSSMLTemplateLibrary_Click" 
+            ToolTip="SSML Template Library" Background="LightCyan">
+        <TextBlock Text="📚 Templates"/>
+    </Button>
+    
+    <Button Name="btnAnalyzeMath" Click="AnalyzeMathAndSuggest_Click" 
+            ToolTip="Analyze and suggest SSML for math" Background="LightSalmon">
+        <TextBlock Text="🔢 Analyze Math"/>
+    </Button>
+    
+    <!-- ... existing buttons ... -->
+</ToolBar>
